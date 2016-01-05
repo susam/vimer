@@ -1,0 +1,227 @@
+#!/bin/sh
+
+# Vimer - A convenience wrapper for gvim/mvim --remote(-tab)-silent.
+
+# The MIT License (MIT)
+#
+# Copyright (c) 2010-2016 Susam Pal
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+VERSION=0.1.0
+
+COPYRIGHT="Copyright (c) 2010-2016 Susam Pal"
+
+NOTICE="
+This is free software. You are permitted to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of it, under the
+terms of the MIT License. See <http://susam.in/licenses/mit/> for the
+complete license."
+
+NAME=${0##*/}
+
+
+# Starting point of this script.
+#
+# Arguments:
+#   arg...: All arguments this script was invoked with
+main()
+{
+    if [ -z "$VIM_CMD" ]
+    then
+        VIM_CMD="$(find_vim)"
+    fi
+
+    parse_arguments "$@"
+}
+
+
+# Find a GVim or MacVim.
+#
+# If either GVim or MacVim is found, print its name; do not print
+# anything otherwise.
+find_vim()
+{
+    for v in gvim mvim
+    do
+        if "$v" --version > /dev/null 2>&1
+        then
+            printf "%s" "$v"
+            break
+        fi
+    done
+}
+
+
+# Parse command line arguments passed to this script.
+#
+# Arguments:
+#   arg...: All arguments this script was invoked with
+parse_arguments()
+{
+    while [ "$#" -gt 0 ]
+    do
+        case "$1" in
+            -t | --tab)
+                tab=-tab
+                shift
+                ;;
+            -n | --name)
+                echo "$VIM_CMD"
+                exit
+                ;;
+            -h | --help)
+                show_help
+                exit
+                ;;
+            -v | --version)
+                show_version
+                exit
+                ;;
+            *)
+                break
+                ;;
+            -)
+                exec_vim_with_stdin
+                exit
+                ;;
+            ?*)
+                exec_vim --remote$tab-silent "$@"
+                exit
+                ;;
+        esac
+    done
+
+    if [ -z "$1" ]
+    then
+        exec_vim
+    elif [ "$1" = "-" ]
+    then
+        if [ -n "$2" ]
+        then
+            quit Too many edit arguments: \""$2"\"
+        fi
+        exec_vim_with_stdin
+    else
+        exec_vim --remote$tab-silent "$@"
+    fi
+}
+
+
+# Save standard input in a temporary file and edit it.
+exec_vim_with_stdin()
+{
+    # Create temporary directory.
+    tmp_dir=/tmp/vimer
+    if ! mkdir -p "$tmp_dir"
+    then
+        quit Cannot create temporary directory: "$tmp_dir".
+    fi
+
+    # Determine a unique temporary filename.
+    while :
+    do
+        r=$(awk 'BEGIN { srand(); print int(65536 * rand()) }')
+        d=$(date "+%Y-%m-%d_%H-%M-%S")
+        stdin_file="$tmp_dir/_STDIN_$r_$d"
+        if [ ! -e "$stdin_file" ]
+        then
+            break
+        fi
+    done
+
+    # Create temporary file and edit it.
+    cat > "$stdin_file"
+    exec_vim --remote$tab-silent "$stdin_file"
+}
+
+
+# Execute GVim or MacVim with specified arguments.
+#
+# Arguments:
+#   arg...: One or more arguments to GVim or MacVim
+#
+# Errors:
+#   Exit with an error message if VIM_CMD variable is not set.
+exec_vim()
+{
+    if [ -z "$VIM_CMD" ]
+    then
+        quit Cannot find GVim or MacVim.
+        return
+    fi
+
+    exec "$VIM_CMD" "$@"
+}
+
+
+# Terminate the script with an error message.
+#
+# Arguments:
+#   string...: String to print to standard error stream.
+#
+# Errors:
+#   Unconditionally cause the script to terminate with an error message
+#   and exit code 1.
+quit()
+{
+    printf "%s: %s\n" "$NAME" "$*" >&2
+    exit 1
+}
+
+
+# Show help.
+show_help()
+{
+    printf "%s\n" \
+"Usage: $NAME [-t] [-n] [-h] [-v] [-|FILE...]
+
+This is a wrapper script to open files in existing GVim or MacVim. If an
+existing instance of GVim or MacVim is running, the files are opened in
+it, otherwise, a new GVim or MacVim instance is launched. If no
+arguments are specified, a new GVim or MacVim instance is launched.
+
+If this script cannot find GVim or MacVim, set the VIM_CMD environment
+variable with the command to execute GVim or MacVim as its value.
+
+Arguments:
+  -              Read text from standard input.
+  FILE...        Read text from one or more files.
+
+Options:
+  -t, --tab      Open each file in new tab.
+  -n, --name     Show the name/path of GVim/MacVim being used.
+  -h, --help     Show this help and exit.
+  -v, --version  Show version and exit.
+
+Report bugs to <https://github.com/susam/vimer/issues>."
+}
+
+
+# Show version and copyright.
+show_version()
+{
+    printf "Vimer %s\n%s\n%s\n" "$VERSION" "$COPYRIGHT" "$NOTICE"
+}
+
+
+# Start.
+main "$@"
