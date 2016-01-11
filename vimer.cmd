@@ -29,9 +29,11 @@ rem SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 rem Starting point of this script.
 :main
     setlocal
-    set VERSION=0.1.0
-    set COPYRIGHT=Copyright (c) 2010-2016 Susam Pal
+    set VERSION=0.1.1-DEV
+    set AUTHOR=Susam Pal
+    set COPYRIGHT=Copyright (c) 2010-2016 %AUTHOR%
     set LICENSE_URL=http://susam.in/licenses/mit/
+    set SUPPORT_URL=https://github.com/susam/vimer/issues
     set NAME=%~n0
 
     set BUF_SHORTCUT=Edit with GVim
@@ -237,10 +239,10 @@ rem Show help.
 :show_help
     echo Usage: %NAME% [-t] [-e^|-d] [-n] [-w] [-h] [-v] [-^|FILE...]
     echo.
-    echo This is a GVim wrapper script to open files in existing GVim.
-    echo If an existing instance of GVim is running, the files are
-    echo opened in it, otherwise, a new GVim instance is launched. If no
-    echo arguments are specified, a new GVim instance is launched.
+    echo This is a wrapper script to open files in existing GVim. If an
+    echo existing instance of GVim is running, the files are opened in it,
+    echo otherwise, a new GVim instance is launched. If no arguments are
+    echo specified, a new GVim instance is launched.
     echo.
     echo If this script cannot find GVim, set the VIM_CMD environment
     echo variable with the command to execute GVim as its value.
@@ -258,22 +260,23 @@ rem Show help.
     echo   -h, --help, /?  Show this help and exit.
     echo   -v, --version   Show version and exit.
     echo.
-    echo Report bugs to ^<https://github.com/susam/vimer/issues^>.
-    call :pause
-    goto :eof
+    echo Report bugs to ^<%SUPPORT_URL%^>.
+call :pause
+goto :eof
 
 
 rem Show version and copyright.
-:show_version
+    :show_version
     echo Vimer %VERSION%
     echo %COPYRIGHT%
     echo.
-    echo This is free software. You are permitted to use, copy, modify, merge,
-    echo publish, distribute, sublicense, and/or sell copies of it, under the
-    echo terms of the MIT License. See ^<%LICENSE_URL%^> for the
-    echo complete license.
+    echo This is free and open source software. You can use, copy, modify,
+    echo merge, publish, distribute, sublicense, and/or sell copies of it,
+    echo under the terms of the MIT License. You may obtain a copy of the
+    echo MIT License at <%LICENSE_URL%>.
     echo.
-    echo Written by Susam Pal.
+    echo This software is provided "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    echo express or implied. See the MIT License for details.
     call :pause
     goto :eof
 
