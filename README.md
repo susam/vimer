@@ -113,13 +113,11 @@ Getting Started
 ---------------
 Vimer is a single-file executable script.
 
-Download [`vimer.cmd`][DOWNLOAD_WIN] for Windows, or [`vimer`][DOWNLOAD_LIN]
-for Linux or Mac OS X.
+Download [`vimer.cmd`][DOWNLOAD_WIN] for Windows,
+or [`vimer`][DOWNLOAD_LIN] for Linux or Mac OS X.
 
 Copy it to a directory specified in the PATH environment variable. On
-Linux or Mac OS X, make the script executable with the `chmod` command.
-
-    chmod u+x vimer
+Linux or Mac OS X, make the script executable: `chmod u+x vimer`.
 
 The following list describes some of the ways Vimer may be used.
 

@@ -121,7 +121,7 @@ rem   arg...: All arguments this script was invoked with
     ) else if %1. == -. (
         rem Hyphen should not be followed by any arguments.
         if not %2. == . (
-            call :err Too many edit arguments: "%2"
+            call :err Too many edit arguments: "%2".
             exit /b 1
         )
         call :exec_vim_with_stdin

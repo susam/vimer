@@ -123,7 +123,7 @@ parse_arguments()
     then
         if [ -n "$2" ]
         then
-            quit Too many edit arguments: \""$2"\"
+            quit Too many edit arguments: \""$2"\".
         fi
         exec_vim_with_stdin
     else

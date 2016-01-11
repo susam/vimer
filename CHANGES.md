@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.1.1 (UNRELEASED)
+------------------
+- FIX: Minor cosmetic issues in help, version and error messages.
+
 0.1.0 (2016-01-05)
 ------------------
 - NEW: Open files in new buffers in the same instance of GVim or MacVim.
