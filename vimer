@@ -36,7 +36,7 @@ SUPPORT_URL="https://github.com/susam/vimer/issues"
 NOTICE="
 This is free and open source software. You can use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of it,
-under the terms of the MIT License. You may obtain a copy of the
+under the terms of the MIT License. You can obtain a copy of the
 MIT License at <$LICENSE_URL>.
 
 This software is provided \"AS IS\", WITHOUT WARRANTY OF ANY KIND,

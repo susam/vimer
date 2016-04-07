@@ -272,7 +272,7 @@ rem Show version and copyright.
     echo.
     echo This is free and open source software. You can use, copy, modify,
     echo merge, publish, distribute, sublicense, and/or sell copies of it,
-    echo under the terms of the MIT License. You may obtain a copy of the
+    echo under the terms of the MIT License. You can obtain a copy of the
     echo MIT License at <%LICENSE_URL%>.
     echo.
     echo This software is provided "AS IS", WITHOUT WARRANTY OF ANY KIND,
