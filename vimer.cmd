@@ -230,7 +230,7 @@ rem
 rem Arguments:
 rem   string...: String to print to standard error stream.
 :err
-    echo %NAME%: %* >&2
+    >&2 echo %NAME%: %*
     call :pause
     goto :eof
 
