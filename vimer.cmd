@@ -29,7 +29,7 @@ rem SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 rem Starting point of this script.
 :main
     setlocal
-    set VERSION=0.1.1-DEV
+    set VERSION=0.2.0
     set AUTHOR=Susam Pal
     set COPYRIGHT=Copyright (c) 2010-2016 %AUTHOR%
     set LICENSE_URL=http://susam.in/licenses/mit/
@@ -41,7 +41,6 @@ rem Starting point of this script.
 
     if "%VIM_CMD%" == "" call :find_vim
 
-    set tab=
     call :parse_arguments %*
 
     endlocal
@@ -65,80 +64,97 @@ rem Arguments:
 rem   arg...: All arguments this script was invoked with
 :parse_arguments
     rem Parse options.
-    if %1. == -t. (
+    if "%~1" == "-t" (
         set tab=-tab
         shift
         goto :parse_arguments
-    ) else if %1. == --tab. (
+    ) else if "%~1" == "--tab" (
         set tab=-tab
         shift
         goto :parse_arguments
-    ) else if %1. == -n. (
+    ) else if "%~1" == "-s" (
+        if "%~2" == "" (
+            call :err Argument missing after: "%~1".
+            exit /b 1
+        )
+        set server=%~2
+        shift
+        shift
+        goto :parse_arguments
+    ) else if "%~1" == "--server" (
+        if "%~2" == "" (
+            call :err Argument missing after: "%~1".
+            exit /b 1
+        )
+        set server=%~2
+        shift
+        shift
+        goto :parse_arguments
+    ) else if "%~1" == "-n" (
         call :show_name
         goto :eof
-    ) else if %1. == --name. (
+    ) else if "%~1" == "--name" (
         call :show_name
         goto :eof
-    ) else if %1. == -e. (
+    ) else if "%~1" == "-e" (
         call :enable
         goto :eof
-    ) else if %1. == --enable. (
+    ) else if "%~1" == "--enable" (
         call :enable
         goto :eof
-    ) else if %1. == -d. (
+    ) else if "%~1" == "-d" (
         call :disable
         goto :eof
-    ) else if %1. == --disable. (
+    ) else if "%~1" == "--disable" (
         call :disable
         goto :eof
-    ) else if %1. == -w. (
+    ) else if "%~1" == "-w" (
         call :where_am_i
         goto :eof
-    ) else if %1. == --where. (
+    ) else if "%~1" == "--where" (
         call :where_am_i
         goto :eof
-    ) else if %1. == -h. (
+    ) else if "%~1" == "-h" (
         call :show_help
         goto :eof
-    ) else if %1. == --help. (
+    ) else if "%~1" == "--help" (
         call :show_help
         goto :eof
-    ) else if %1. == /?. (
+    ) else if "%~1" == "/?" (
         call :show_help
         goto :eof
-    ) else if %1. == -v. (
+    ) else if "%~1" == "-v" (
         call :show_version
         goto :eof
-    ) else if %1. == --version. (
+    ) else if "%~1" == "--version" (
         call :show_version
         goto :eof
     )
 
-    rem Handle no arguments or hyphen as an argument.
-    if %1. == . (
+    if "%~1" == "" (
+        rem If no file arguments are specified, start a new instance of
+        rem GVim.
         call :exec_vim
         goto :eof
-    ) else if %1. == -. (
-        rem Hyphen should not be followed by any arguments.
-        if not %2. == . (
-            call :err Too many edit arguments: "%2".
+    ) else if "%~1" == "-" (
+        rem If hyphen is specified as a file argument, read input from
+        rem standard input.
+        if not "%~2" == "" (
+            call :err Too many edit arguments: "%~2".
             exit /b 1
         )
         call :exec_vim_with_stdin
         goto :eof
     )
 
-    rem Consume remaining arguments.
-    set args=%1
-    :begin_loop_args
+    rem Consume remaining file arguments.
+    :consume_args
+        set args=%args% "%~1"
         shift
-        if %1. == . goto :end_loop_args
-        set args=%args% %1
-        goto :begin_loop_args
-    :end_loop_args
+        if not "%~1" == "" goto :consume_args
 
-    rem Execute GVim with the remaining arguments.
-    call :exec_vim --remote%tab%-silent %args%
+    rem Execute GVim with the remaining file arguments.
+    call :exec_vim %args%
     goto :eof
 
 
@@ -167,7 +183,7 @@ rem Save standard input in a temporary file and edit it.
 
     rem Create temporary file and edit it.
     findstr "^" > "%stdin_file%"
-    call :exec_vim %* --remote%tab%-silent "%stdin_file%"
+    call :exec_vim "%stdin_file%"
 
     endlocal
     goto :eof
@@ -186,7 +202,20 @@ rem   Exit with an error message if VIM_CMD variable is not set.
         exit /b 1
     )
 
-    start "" "%VIM_CMD%" %*
+    rem If server name is specified, open files in an existing instance
+    rem of GVim with the specified server name, or start a new instance
+    rem of GVim with the specified server name.
+    if not "%server%" == "" (
+        set opts=%opts% --servername "%server%"
+    )
+
+    rem If file arguments are specified, open them in an existing
+    rem instance of GVim.
+    if not "%~1" == "" (
+        set opts=%opts% --remote%tab%-silent
+    )
+
+    start "" "%VIM_CMD%" %opts% %*
     goto :eof
 
 
@@ -200,7 +229,7 @@ rem Show the known name or path of GVim executable.
 rem Add a new context menu option to open files with this script.
 :enable
     setlocal
-    if %tab%. == -tab. (set k=%TAB_SHORTCUT%) else (set k=%BUF_SHORTCUT%)
+    if "%tab%" == "-tab" (set k=%TAB_SHORTCUT%) else (set k=%BUF_SHORTCUT%)
     set d=\"%VIM_CMD%\" --remote%tab%-silent \"%%1\"
     reg add "HKCR\*\shell\%k%\command" /f /ve /d "%d%"
     endlocal
@@ -211,7 +240,7 @@ rem Add a new context menu option to open files with this script.
 rem Remove context menu option to open files with this script.
 :disable
     setlocal
-    if %tab%. == -tab. (set k=%TAB_SHORTCUT%) else (set k=%BUF_SHORTCUT%)
+    if "%tab%" == "-tab" (set k=%TAB_SHORTCUT%) else (set k=%BUF_SHORTCUT%)
     reg delete "HKCR\*\shell\%k%" /f
     endlocal
     call :pause
@@ -237,28 +266,29 @@ rem   string...: String to print to standard error stream.
 
 rem Show help.
 :show_help
-    echo Usage: %NAME% [-t] [-e^|-d] [-n] [-w] [-h] [-v] [-^|FILE...]
+    echo Usage: %NAME% [-t] [-s] [-e^|-d] [-n] [-w] [-h] [-v] [-^|FILE...]
     echo.
     echo This is a wrapper script to open files in existing GVim. If an
     echo existing instance of GVim is running, the files are opened in it,
-    echo otherwise, a new GVim instance is launched. If no arguments are
+    echo otherwise, a new GVim instance is launched. If no FILE is
     echo specified, a new GVim instance is launched.
     echo.
     echo If this script cannot find GVim, set the VIM_CMD environment
     echo variable with the command to execute GVim as its value.
     echo.
     echo Arguments:
-    echo   -               Read text from standard input.
-    echo   FILE...         Read text from one or more files.
+    echo   -                  Read text from standard input.
+    echo   FILE...            Read text from one or more files.
     echo.
     echo Options:
-    echo   -t, --tab       Open each file in new tab.
-    echo   -e, --enable    Enable context menu option to edit files.
-    echo   -d, --disable   Disable context menu option to edit files.
-    echo   -n, --name      Show the name/path of GVim being used.
-    echo   -w, --where     Show the path where this script is present.
-    echo   -h, --help, /?  Show this help and exit.
-    echo   -v, --version   Show version and exit.
+    echo   -t, --tab          Open each file in new tab.
+    echo   -s, --server NAME  Open files in GVim server with specified NAME.
+    echo   -e, --enable       Enable context menu option to edit files.
+    echo   -d, --disable      Disable context menu option to edit files.
+    echo   -n, --name         Show the name/path of GVim being used.
+    echo   -w, --where        Show the path where this script is present.
+    echo   -h, --help, /?     Show this help and exit.
+    echo   -v, --version      Show version and exit.
     echo.
     echo Report bugs to ^<%SUPPORT_URL%^>.
 call :pause

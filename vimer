@@ -26,7 +26,7 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-VERSION=0.1.1-DEV
+VERSION=0.2.0
 AUTHOR="Susam Pal"
 COPYRIGHT="Copyright (c) 2010-2016 $AUTHOR"
 
@@ -81,17 +81,26 @@ find_vim()
 #
 # Arguments:
 #   arg...: All arguments this script was invoked with
+#
+# Errors:
+#   Exit with an error message if invalid arguments are specified.
 parse_arguments()
 {
-    while [ "$#" -gt 0 ]
+    while [ $# -gt 0 ]
     do
-        case "$1" in
+        case $1 in
             -t | --tab)
                 tab=-tab
                 shift
                 ;;
+            -s | --server)
+                [ $# -lt 2 ] && quit Argument missing after: \""$1"\".
+                [ -z "$2" ] && quit Non-empty string must follow \""$1"\".
+                server=$2
+                shift 2
+                ;;
             -n | --name)
-                echo "$VIM_CMD"
+                printf "%s\n" "$VIM_CMD"
                 exit
                 ;;
             -h | --help)
@@ -105,30 +114,31 @@ parse_arguments()
             *)
                 break
                 ;;
-            -)
-                exec_vim_with_stdin
-                exit
-                ;;
-            ?*)
-                exec_vim --remote$tab-silent "$@"
-                exit
-                ;;
         esac
     done
 
-    if [ -z "$1" ]
+    if [ $# -eq 0 ]
     then
+        # If no file arguments are specified, start a new instance of
+        # GVim or MacVim.
         exec_vim
     elif [ "$1" = "-" ]
     then
-        if [ -n "$2" ]
-        then
-            quit Too many edit arguments: \""$2"\".
-        fi
+        # If hyphen is specified as a file argument, read input from
+        # standard input.
+        [ $# -gt 1 ] && quit Too many edit arguments: \""$2"\".
         exec_vim_with_stdin
-    else
-        exec_vim --remote$tab-silent "$@"
     fi
+
+    # Consume remaining file arguments.
+    while [ "$#" -gt 0 ]
+    do
+        args="$args \"$1\""
+        shift
+    done
+
+    # Execute GVim or MacVim with remaining file arguments.
+    exec_vim "$args"
 }
 
 
@@ -156,14 +166,24 @@ exec_vim_with_stdin()
 
     # Create temporary file and edit it.
     cat > "$stdin_file"
-    exec_vim --remote$tab-silent "$stdin_file"
+    exec_vim "$stdin_file"
 }
 
 
 # Execute GVim or MacVim with specified arguments.
 #
+# This function accepts only a single argument that may represent
+# multiple arguments for GVim or MacVim. For example, if GVim or MacVim
+# needs to be invoked with two arguments, e.g. "foo bar.txt" and "baz
+# qux.txt", then this function must be invoked as follows.
+#
+#     exec_vim "\"foo bar.txt\" \"baz qux.txt\""
+#
+# Note that the above call has only one argument that represents two
+# quoted arguments that need to be passed to GVim or MacVim.
+#
 # Arguments:
-#   arg...: One or more arguments to GVim or MacVim
+#   args...: All arguments specified as a single argument.
 #
 # Errors:
 #   Exit with an error message if VIM_CMD variable is not set.
@@ -175,7 +195,23 @@ exec_vim()
         return
     fi
 
-    exec "$VIM_CMD" "$@"
+    # If server name is specified, open files in an existing instance of
+    # GVim or MacVim with the specified server name, or start a new
+    # instance of GVim or MacVim with the specified server name.
+    if [ -n "$server" ]
+    then
+        opts="$opts --servername \"$server\""
+    fi
+
+    # If file arguments are specified, open them in an existing instance
+    # of GVim or MacVim.
+    if [ -n "$1" ]
+    then
+        opts="$opts --remote$tab-silent"
+    fi
+
+
+    eval exec "$VIM_CMD" "$opts" "$1"
 }
 
 
@@ -198,7 +234,7 @@ quit()
 show_help()
 {
     printf "%s\n" \
-"Usage: $NAME [-t] [-n] [-h] [-v] [-|FILE...]
+"Usage: $NAME [-t] [-s] [-n] [-h] [-v] [-|FILE...]
 
 This is a wrapper script to open files in existing GVim or MacVim.
 If an existing instance of GVim or MacVim is running, the files are
@@ -210,14 +246,15 @@ If this script cannot find GVim or MacVim, set the VIM_CMD environment
 variable with the command to execute GVim or MacVim as its value.
 
 Arguments:
-  -              Read text from standard input.
-  FILE...        Read text from one or more files.
+  -                  Read text from standard input.
+  FILE...            Read text from one or more files.
 
 Options:
-  -t, --tab      Open each file in new tab.
-  -n, --name     Show the name/path of GVim/MacVim being used.
-  -h, --help     Show this help and exit.
-  -v, --version  Show version and exit.
+  -t, --tab          Open each file in new tab.
+  -s, --server NAME  Open files in GVim server with specified NAME.
+  -n, --name         Show the name/path of GVim/MacVim being used.
+  -h, --help         Show this help and exit.
+  -v, --version      Show version and exit.
 
 Report bugs to <$SUPPORT_URL>."
 }

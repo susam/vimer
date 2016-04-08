@@ -1,9 +1,9 @@
 Changelog
 =========
 
-0.1.1 (UNRELEASED)
+0.2.0 (2016-04-08)
 ------------------
-- FIX: Minor cosmetic issues in help, version and error messages.
+- NEW: Open files in a specific GVim server with `-s` option.
 
 0.1.0 (2016-01-05)
 ------------------

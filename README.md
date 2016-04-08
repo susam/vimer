@@ -17,8 +17,8 @@ existing instance of GVim or MacVim in various desktop environments.
 
 [SHIELD_WIN]: https://img.shields.io/badge/download-vimer%2ecmd%20for%20Windows-brightgreen.svg
 [SHIELD_LIN]: https://img.shields.io/badge/download-vimer%20for%20Linux%2fMac%20OS%20X-brightgreen.svg
-[DOWNLOAD_WIN]: https://github.com/susam/vimer/releases/download/0.1.0/vimer.cmd
-[DOWNLOAD_LIN]: https://github.com/susam/vimer/releases/download/0.1.0/vimer
+[DOWNLOAD_WIN]: https://github.com/susam/vimer/releases/download/0.2.0/vimer.cmd
+[DOWNLOAD_LIN]: https://github.com/susam/vimer/releases/download/0.2.0/vimer
 
 [1]: https://packages.debian.org/stable/posh
 [2]: https://packages.debian.org/stable/dash
@@ -50,7 +50,7 @@ This project was written to address the following needs.
      file being opened is already open in another instance of GVim or
      MacVim, the editor warns about an existing swap file and requires
      the user to take action for it. This can be distracting sometimes.
-     
+
      Of course, one can open and edit all files from within a single
      GVim or MacVim instance with the editor commands such as `:e` or
      `:tabe` to avoid these problems, but it is still useful to be able
@@ -92,7 +92,7 @@ This project was written to address the following needs.
 
     Vimer offers a litle more elaborate wrapper script that handles
     these special cases better.
-     
+
     - `vimer foo.txt bar.txt` opens both files in the same instance of
       GVim or MacVim.
     - `vimer` launches a new instance of GVim or MacVim.
@@ -147,8 +147,30 @@ The following list describes some of the ways Vimer may be used.
         ls -l | vimer -
         ls -l | vimer -t -
 
-  5. Enable a context menu option called 'Edit with GVim' for files on
-     Windows so that a file can be opened in GVim.
+  5. Launch a new instance of GVim or MacVim with a specific server name.
+
+        vimer -s FOO
+
+     If the specified server name is already being used by another
+     instance of the editor, a number postfix is applied (e.g. FOO1,
+     FOO2, etc.) until a free name is encountered.
+
+  6. Edit files in GVim or MacVim with a specific server name.
+
+        vimer -s FOO foo.txt bar.txt baz.txt
+
+     If an instance of GVim or MacVim with the specified server name is
+     already running, this command opens the files in that instance of
+     the editor. If such an instance of the editor does not exist, then
+     the first server with the number postfix will be used.
+
+     If there is no existing instance of the editor with a matching
+     server name or a server name with number postfix, the files are
+     opened in separate buffers in a new instance of the editor with the
+     specified server name, or a server name with number postfix.
+
+  7. Enable a context menu option called 'Edit with GVim' for files on
+     Windows.
 
         vimer --enable
 
@@ -165,13 +187,12 @@ The following list describes some of the ways Vimer may be used.
     as explained in the next point. Such a context menu option is not
     provided by the GVim installer for Windows.
 
-  6. Enable a context menu option called 'Edit with GVim tab' for files
-     on Windows so that a file can be opened in a new tab page in an
-     existing instance of GVim.
+  8. Enable a context menu option called 'Edit with GVim tab' for files
+     on Windows.
 
         vimer -t --enable
- 
-  7. Disable context menu options on Windows.
+
+  9. Disable context menu options on Windows.
 
         vimer --disable
         vimer -t --disable
@@ -181,7 +202,7 @@ The following list describes some of the ways Vimer may be used.
     read how to create such context menu option in other desktop
     environments.
 
-  8. For more details on how to use Vimer, execute the following command.
+  10. For more details on how to use Vimer, execute the following command.
 
         vimer --help
 
@@ -211,7 +232,7 @@ Troubleshooting
 
    If this happens, it is very likely that the `gvim` or `mvim` command
    is still running GVim or MacVim, respectively, not Vimer.
-   
+
    To confirm, execute the following command on Linux.
 
         gvim --version
@@ -245,7 +266,7 @@ Troubleshooting
 
         export VIM_CMD=/usr/bin/gvim
 
-   Here is an example for Mac OS X. 
+   Here is an example for Mac OS X.
 
         export VIM_CMD=~/bin/mvim
 
