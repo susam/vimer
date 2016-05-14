@@ -157,7 +157,7 @@ exec_vim_with_stdin()
     do
         r=$(awk 'BEGIN { srand(); print int(65536 * rand()) }')
         d=$(date "+%Y-%m-%d_%H-%M-%S")
-        stdin_file="$tmp_dir/_STDIN_$r_$d"
+        stdin_file="$tmp_dir/_STDIN_${r}_$d"
         if [ ! -e "$stdin_file" ]
         then
             break
