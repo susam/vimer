@@ -26,7 +26,7 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-VERSION=0.2.0
+VERSION=0.2.1-DEV
 AUTHOR="Susam Pal"
 COPYRIGHT="Copyright (c) 2010-2016 $AUTHOR"
 
@@ -233,8 +233,8 @@ quit()
 # Show help.
 show_help()
 {
-    printf "%s\n" \
-"Usage: $NAME [-t] [-s] [-n] [-h] [-v] [-|FILE...]
+    cat <<eof
+Usage: $NAME [-t] [-s] [-n] [-h] [-v] [-|FILE...]
 
 This is a wrapper script to open files in existing GVim or MacVim.
 If an existing instance of GVim or MacVim is running, the files are
@@ -256,14 +256,19 @@ Options:
   -h, --help         Show this help and exit.
   -v, --version      Show version and exit.
 
-Report bugs to <$SUPPORT_URL>."
+Report bugs to <$SUPPORT_URL>.
+eof
 }
 
 
 # Show version and copyright.
 show_version()
 {
-    printf "Vimer %s\n%s\n%s\n" "$VERSION" "$COPYRIGHT" "$NOTICE"
+    cat <<eof
+Vimer $VERSION
+$COPYRIGHT
+$NOTICE
+eof
 }
 
 
