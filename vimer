@@ -44,6 +44,8 @@ express or implied. See the MIT License for details."
 
 NAME=${0##*/}
 
+TMP_DIR=/tmp/vimer
+EDITORS=gvim:mvim
 
 # Starting point of this script.
 #
@@ -66,7 +68,7 @@ main()
 # anything otherwise.
 find_vim()
 {
-    for v in gvim mvim
+    echo $EDITORS | tr : '\n' | while read -r v
     do
         if "$v" --version > /dev/null 2>&1
         then
@@ -146,10 +148,9 @@ parse_arguments()
 exec_vim_with_stdin()
 {
     # Create temporary directory.
-    tmp_dir=/tmp/vimer
-    if ! mkdir -p "$tmp_dir"
+    if ! mkdir -p "$TMP_DIR"
     then
-        quit Cannot create temporary directory: "$tmp_dir".
+        quit Cannot create temporary directory: "$TMP_DIR".
     fi
 
     # Determine a unique temporary filename.
@@ -157,7 +158,7 @@ exec_vim_with_stdin()
     while :
     do
         d=$(date "+%Y-%m-%d_%H-%M-%S")
-        stdin_file="$tmp_dir/_STDIN_${d}_${n}"
+        stdin_file="$TMP_DIR/_STDIN_${d}_${n}"
         n=$(( $n + 1 ))
         if [ ! -e "$stdin_file" ]
         then
@@ -193,7 +194,6 @@ exec_vim()
     if [ -z "$VIM_CMD" ]
     then
         quit Cannot find GVim or MacVim.
-        return
     fi
 
     # If server name is specified, open files in an existing instance of
@@ -274,4 +274,4 @@ eof
 
 
 # Start.
-main "$@"
+[ -z "$import" ] && main "$@"
