@@ -5,14 +5,17 @@ instance of GVim or MacVim.
 
 [![Download][SHIELD_WIN]][DOWNLOAD_WIN]
 [![Download][SHIELD_LIN]][DOWNLOAD_LIN]
+[![Build Status][BUILD_IMG]][BUILD_URL]
+[![Coverage Status][COVERAGE_IMG]][COVERAGE_URL]
 
 The Windows script has been verified on Windows 7 only. However, it
 should work fine on other recent versions of Windows too. The Linux
-script has been verified with [posh][1], [dash][2] and [bash][3], so it
-should work fine on any POSIX compliant shell.
+script has been verified with [bash][bash], [ksh][ksh], [zsh][zsh],
+[dash][dash] and [posh][posh]; it should work fine on any POSIX
+compliant shell.
 
-This README documents the usage of these scripts. Further, it also
-documents how to create context menu options to open files in an
+This README documents the usage of these scripts. Further, as bonus, it
+also documents how to create context menu options to open files in an
 existing instance of GVim or MacVim in various desktop environments.
 
 [SHIELD_WIN]: https://img.shields.io/badge/download-vimer%2ecmd%20for%20Windows-brightgreen.svg
@@ -20,9 +23,16 @@ existing instance of GVim or MacVim in various desktop environments.
 [DOWNLOAD_WIN]: https://github.com/susam/vimer/releases/download/0.2.0/vimer.cmd
 [DOWNLOAD_LIN]: https://github.com/susam/vimer/releases/download/0.2.0/vimer
 
-[1]: https://packages.debian.org/stable/posh
-[2]: https://packages.debian.org/stable/dash
-[3]: https://packages.debian.org/stable/bash
+[BUILD_IMG]: https://travis-ci.org/susam/vimer.svg?branch=master
+[BUILD_URL]: https://travis-ci.org/susam/vimer
+[COVERAGE_IMG]: https://coveralls.io/repos/github/susam/vimer/badge.svg?branch=master
+[COVERAGE_URL]: https://coveralls.io/github/susam/vimer?branch=master
+
+[bash]: https://packages.debian.org/stable/bash
+[ksh]: https://packages.debian.org/stable/ksh
+[zsh]: https://packages.debian.org/stable/zsh
+[dash]: https://packages.debian.org/stable/dash
+[posh]: https://packages.debian.org/stable/posh
 
 
 Contents
