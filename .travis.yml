@@ -1,0 +1,15 @@
+install:
+    - sudo apt-get update
+    - sudo apt-get install g++ pkg-config libcurl4-gnutls-dev libelf-dev libdw-dev zlib1g-dev
+    - git clone https://github.com/SimonKagstrom/kcov.git
+    - mkdir kcov/build
+    - cd kcov/build
+    - cmake ..
+    - make
+    - sudo make install
+    - cd ../..
+    - sudo apt-get install ksh zsh posh
+script:
+    - make test
+    - make alltest
+    - make coveralls
