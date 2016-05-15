@@ -153,11 +153,12 @@ exec_vim_with_stdin()
     fi
 
     # Determine a unique temporary filename.
+    n=0
     while :
     do
-        r=$(awk 'BEGIN { srand(); print int(65536 * rand()) }')
         d=$(date "+%Y-%m-%d_%H-%M-%S")
-        stdin_file="$tmp_dir/_STDIN_${r}_$d"
+        stdin_file="$tmp_dir/_STDIN_${d}_${n}"
+        n=$(( $n + 1 ))
         if [ ! -e "$stdin_file" ]
         then
             break
