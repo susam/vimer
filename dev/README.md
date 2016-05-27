@@ -6,12 +6,12 @@ Tests
 All discussion about tests in this section assume that the tests are
 being run on a Debian or Debian based system. On other systems, the
 commands mentioned below may need to be modified appropriately. The
-Linux/Mac OS X *vimer* script, however, can run on any POSIX conformant
+Linux/OS X *vimer* script, however, can run on any POSIX conformant
 Unix or Linux system with any POSIX conformant shell without any changes
 to the script.
 
-The Windows vimer.cmd script is not discussed in this document at all.
-There are no tests for it.
+The Windows vimer.cmd script is not discussed here. There are no tests
+for it.
 
 ### Setup Test Environment ###
 Enter the following commands as root to install kcov. It is used to

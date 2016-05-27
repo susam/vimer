@@ -29,7 +29,7 @@ rem SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 rem Starting point of this script.
 :main
     setlocal
-    set VERSION=0.2.0
+    set VERSION=0.2.1-DEV
     set AUTHOR=Susam Pal
     set COPYRIGHT=Copyright (c) 2010-2016 %AUTHOR%
     set LICENSE_URL=http://susam.in/licenses/mit/
