@@ -29,14 +29,14 @@
 # Location of test script files.
 TMAIN=test
 
-# Location of test data files.
-TDATA=test/data
-
 # Temporary working directory that may be used by any tests.
 TWORK=test/work
 
 # Temporary file containing the list of all discovered tests.
 TLIST=test/list
+
+# Location of test data files.
+TDATA=test/data
 
 # Start afresh with a clean test list.
 rm -f "$TLIST" "$TWORK"
@@ -74,7 +74,7 @@ pass=0
 # Number of tests that failed.
 fail=0
 
-import=true . ./vimer
+[ -f "test/setup" ] && . test/setup
 
 # Execute each test.
 while read -r test_spec
@@ -95,6 +95,5 @@ do
 done < "$TLIST"
 rm "$TLIST"
 
-echo
 echo PASS: $pass
 [ $fail -gt 0 ] && echo FAIL: $fail && exit 1 || exit 0
