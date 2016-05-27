@@ -1,17 +1,21 @@
 test: .FORCE
 	sh test/test
 
-alltest: test
+unixtest:
 	echo Testing with bash ...
 	bash test/test
 	echo Testing with ksh ...
 	ksh test/test
 	echo Testing with zsh ...
 	zsh test/test
+
+posixtest:
 	echo Testing with dash ...
 	dash test/test
 	echo Testing with posh ...
 	posh test/test
+
+alltest: test unixtest posixtest
 
 coverage: .FORCE
 	rm -rf coverage
