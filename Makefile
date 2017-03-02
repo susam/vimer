@@ -1,21 +1,17 @@
 test: .FORCE
 	sh test/test
 
-unixtest:
-	echo Testing with bash ...
+test_unix:
 	bash test/test
-	echo Testing with ksh ...
 	ksh test/test
-	echo Testing with zsh ...
 	zsh test/test
 
-posixtest:
-	echo Testing with dash ...
+test_posix:
 	dash test/test
-	echo Testing with posh ...
 	posh test/test
+	yash test/test
 
-alltest: test unixtest posixtest
+test_all: test unixtest posixtest
 
 coverage: .FORCE
 	rm -rf coverage
@@ -29,3 +25,5 @@ clean:
 	rm -rf coverage
 
 .FORCE:
+
+# vim: noet

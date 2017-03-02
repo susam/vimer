@@ -11,9 +11,9 @@ instance of GVim or MacVim.
 The Windows script has been tested on Windows 7 only. However, it should
 work fine on other recent versions of Windows too.
 
-The Linux/OS X script has been tested with [bash][bash], [ksh][ksh] and
-[zsh][zsh] on Debian and OS X as well as with [dash][dash] and
-[posh][posh] on Debian. It should work fine on any POSIX compliant
+The Linux/OS X script has been tested with [bash][], [ksh][] and
+[zsh][] on Debian and OS X as well as with [dash][], [posh][] and
+[yash][yash] on Debian. It should work fine on any POSIX compliant
 system with a POSIX compliant shell.
 
 [SHIELD_WIN]: https://img.shields.io/badge/download-vimer%2ecmd%20for%20Windows-brightgreen.svg
@@ -31,6 +31,7 @@ system with a POSIX compliant shell.
 [zsh]: https://packages.debian.org/stable/zsh
 [dash]: https://packages.debian.org/stable/dash
 [posh]: https://packages.debian.org/stable/posh
+[yash]: https://packages.debian.org/stable/yash
 
 
 Contents
