@@ -11,7 +11,7 @@ test_posix:
 	posh test/test
 	yash test/test
 
-test_all: test unixtest posixtest
+test_all: test_unix test_posix
 
 coverage: .FORCE
 	rm -rf coverage
