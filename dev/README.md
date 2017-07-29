@@ -1,12 +1,12 @@
-Todo Developer Notes
-====================
+Vimer Developer Notes
+=====================
 
 Tests
 -----
 All discussion about tests in this section assume that the tests are
 being run on a Debian or Debian based system. On other systems, the
 commands mentioned below may need to be modified appropriately. The
-Linux/OS X *vimer* script, however, can run on any POSIX conformant
+Linux/Mac *vimer* script, however, can run on any POSIX conformant
 Unix or Linux system with any POSIX conformant shell without any changes
 to the script.
 
@@ -28,7 +28,7 @@ measure code coverage of the tests.
 
 Enter the following command to install the shells required for testing
 cross-shell compatibility.
-	
+
 	apt-get install bash ksh dash posh
 
 ### Run Tests ###

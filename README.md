@@ -11,8 +11,8 @@ instance of GVim or MacVim.
 The Windows script has been tested on Windows 7 only. However, it should
 work fine on other recent versions of Windows too.
 
-The Linux/OS X script has been tested with [bash][], [ksh][] and
-[zsh][] on Debian and OS X as well as with [dash][], [posh][] and
+The Linux/Mac script has been tested with [bash][], [ksh][] and
+[zsh][] on Debian and Mac as well as with [dash][], [posh][] and
 [yash][yash] on Debian. It should work fine on any POSIX compliant
 system with a POSIX compliant shell.
 
@@ -43,7 +43,7 @@ Contents
   * [Windows](#windows)
   * [Xfce on Linux](#xfce-on-linux)
   * [GNOME on Linux](#gnome-on-linux)
-  * [OS X](#os-x)
+  * [Mac](#mac)
 * [License](#license)
 * [Support](#support)
 
@@ -53,7 +53,7 @@ Necessity
 This project was written to address the following needs.
 
   1. Running `gvim foo.txt` on Windows or Linux, or `mvim foo.txt` on
-     OS X, opens the file in a new GVim or MacVim window. Launching
+     Mac, opens the file in a new GVim or MacVim window. Launching
      GVim or MacVim from the shell in this manner again and again can
      easily clutter the desktop with too many windows. Moreover, if the
      file being opened is already open in another instance of GVim or
@@ -82,7 +82,7 @@ This project was written to address the following needs.
 
         alias myvim="gvim --remote-silent"
 
-     Here is a similar alias for OS X.
+     Here is a similar alias for Mac.
 
         alias myvim="mvim --remote-silent"
 
@@ -123,10 +123,10 @@ Getting Started
 Vimer is a single-file executable script.
 
 Download [`vimer.cmd`][DOWNLOAD_WIN] for Windows,
-or [`vimer`][DOWNLOAD_LIN] for Linux or OS X.
+or [`vimer`][DOWNLOAD_LIN] for Linux or Mac.
 
 Copy it to a directory specified in the PATH environment variable. On
-Linux or OS X, make the script executable: `chmod u+x vimer`.
+Linux or Mac, make the script executable: `chmod u+x vimer`.
 
 The following list describes some of the ways Vimer may be used.
 
@@ -207,7 +207,7 @@ The following list describes some of the ways Vimer may be used.
         vimer -t --disable
 
     The `--enable` and `--disable` options are not supported for Linux
-    and OS X. See the [Context Menu](#context-menu) section below to
+    and Mac. See the [Context Menu](#context-menu) section below to
     read how to create such context menu option in other desktop
     environments.
 
@@ -219,7 +219,7 @@ Users who are very used to typing `vi`, `vim`, `gvim` or `mvim` to run
 the editor and find it difficult to type `vimer` might want to rename this
 script. For example, a user very used to typing `vi`, might want to
 rename this script from `vimer.cmd` to `vi.cmd` on Windows, or `vimer` to
-`vi` on Linux or OS X.
+`vi` on Linux or Mac.
 
 
 Troubleshooting
@@ -234,7 +234,7 @@ Troubleshooting
    Command Prompt, or install the 64 bit Console2 application and
    execute the script from a 64 bit Console2 window.
 
-2. After the script is renamed to `gvim` on Linux or `mvim` on OS X,
+2. After the script is renamed to `gvim` on Linux or `mvim` on Mac,
    running `gvim` or `mvim` with a filename as argument may still open
    the file in a new instance of the editor, not in an existing instance
    of the editor, even if such an instance already exists.
@@ -246,28 +246,28 @@ Troubleshooting
 
         gvim --version
 
-    Or the following command on OS X.
+    Or the following command on Mac.
 
         mvim --version
 
    If the string "VIM" appears in the first line of the output, it is
    GVim or MacVim.
 
-   If it is confirmed that running `gvim` on Linux, or `mvim` on OS X
+   If it is confirmed that running `gvim` on Linux, or `mvim` on Mac
    executes GVim or MacVim, respectively, ensure that the path where
    this script is located appears before the path where GVim or MacVim
    is located in the PATH environment variable.
 
-   Further, on Linux or OS X, set the `VIM_CMD` environment variable
+   Further, on Linux or Mac, set the `VIM_CMD` environment variable
    to the absolute path of GVim or MacVim. For more details about this,
    see the next point.
 
-3. When the script is renamed to `gvim` on Linux or `mvim` on OS X,
+3. When the script is renamed to `gvim` on Linux or `mvim` on Mac,
    and `gvim` or `mvim` is run, the shell may hang. If the `VIM_CMD`
    environment variable is not set, internally, the script invokes the
-   `gvim` command on Linux or the `mvim` command on OS X to edit
+   `gvim` command on Linux or the `mvim` command on Mac to edit
    files. But when this script itself is named as `gvim` on Linux or
-   `mvim` on OS X, invoking `gvim` or `mvim`, respectively, ends up
+   `mvim` on Mac, invoking `gvim` or `mvim`, respectively, ends up
    invoking itself thereby resulting in an infinite recursion.
 
    To resolve the issue, set the `VIM_CMD` environment variable to the
@@ -275,7 +275,7 @@ Troubleshooting
 
         export VIM_CMD=/usr/bin/gvim
 
-   Here is an example for OS X.
+   Here is an example for Mac.
 
         export VIM_CMD=~/bin/mvim
 
@@ -387,8 +387,8 @@ To remove this context menu option, delete the script for the context
 menu option from ~/.gnome2/nautilus-scripts (GNOME 2) or
 ~/.local/share/nautilus/scripts (GNOME 3).
 
-### OS X ###
-The following steps have been found to work fine on OS X 10.9.5
+### Mac ###
+The following steps have been found to work fine on Mac 10.9.5
 (Mavericks).
 
   1. Go to Launchpad, search for 'Automator', then click on it to launch
