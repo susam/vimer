@@ -17,7 +17,7 @@ The Linux/Mac script has been tested with [bash][], [ksh][] and
 system with a POSIX compliant shell.
 
 [SHIELD_WIN]: https://img.shields.io/badge/download-vimer%2ecmd%20for%20Windows-brightgreen.svg
-[SHIELD_LIN]: https://img.shields.io/badge/download-vimer%20for%20Linux%2fOS%20X-brightgreen.svg
+[SHIELD_LIN]: https://img.shields.io/badge/download-vimer%20for%20Linux%2fMac-brightgreen.svg
 [DOWNLOAD_WIN]: https://github.com/susam/vimer/releases/download/0.2.0/vimer.cmd
 [DOWNLOAD_LIN]: https://github.com/susam/vimer/releases/download/0.2.0/vimer
 
