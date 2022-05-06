@@ -239,15 +239,19 @@ if not "%server%" == "" (
   set opts=%opts% --servername "%server%"
 )
 
-rem If file arguments are specified, open them in an existing
-rem instance of GVim.
-if not "%~1" == "" (
-  set opts=%opts% --remote%tab%-silent
+rem gvim instance already running?
+QPROCESS gvim.exe >NUL
+IF %ERRORLEVEL% EQU 0 (
+  rem If file arguments are specified, open them in an existing
+  rem instance of GVim.
+  if EXIST "%~f1" (
+    start /b "" %VIM_CMD% %opts% --remote%tab%-silent %*
+  )
+) else (
+  start /b "" %VIM_CMD% %opts% %*
 )
 
-start /b "" %VIM_CMD% %opts% %*
 goto :eof
-
 
 rem Show the known name or path of GVim executable.
 :show_name
