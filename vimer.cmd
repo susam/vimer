@@ -78,9 +78,11 @@ rem SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     if "%~1" == "-t" (
         set tab=-tab
         shift
+        goto :parse_arguments
     ) else if "%~1" == "--tab" (
         set tab=-tab
         shift
+        goto :parse_arguments
     ) else if "%~1" == "-s" (
         if "%~2" == "" (
             call :err Argument missing after: "%~1".
@@ -88,6 +90,7 @@ rem SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         )
         set server=%~2
         shift & shift
+        goto :parse_arguments
     ) else if "%~1" == "--server" (
         if "%~2" == "" (
             call :err Argument missing after: "%~1".
@@ -95,23 +98,12 @@ rem SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         )
         set server=%~2
         shift & shift
+        goto :parse_arguments
     ) else if "%~1" == "-n" (
         call :show_name
         goto :eof
     ) else if "%~1" == "--name" (
         call :show_name
-        goto :eof
-    ) else if "%~1" == "-e" (
-        call :enable
-        goto :eof
-    ) else if "%~1" == "--enable" (
-        call :enable
-        goto :eof
-    ) else if "%~1" == "-d" (
-        call :disable
-        goto :eof
-    ) else if "%~1" == "--disable" (
-        call :disable
         goto :eof
     ) else if "%~1" == "-w" (
         call :where_am_i
@@ -191,25 +183,6 @@ rem SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     call :pause
     goto :eof
 
-:enable
-    setlocal
-    set k=%BUF_SHORTCUT%
-    if "%tab%" == "-tab" set k=%TAB_SHORTCUT%
-    set d=\"%VIM_CMD%\" --remote%tab%-silent \"%%1\"
-    reg add "HKCR\*\shell\%k%\command" /f /ve /d "%d%"
-    endlocal
-    call :pause
-    goto :eof
-
-:disable
-    setlocal
-    set k=%BUF_SHORTCUT%
-    if "%tab%" == "-tab" set k=%TAB_SHORTCUT%
-    reg delete "HKCR\*\shell\%k%" /f
-    endlocal
-    call :pause
-    goto :eof
-
 :where_am_i
     echo %~f0
     call :pause
@@ -238,8 +211,6 @@ rem SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     echo Options:
     echo   -t, --tab          Open each file in new tab.
     echo   -s, --server NAME  Open files in GVim server with specified NAME.
-    echo   -e, --enable       Enable context menu option to edit files.
-    echo   -d, --disable      Disable context menu option to edit files.
     echo   -n, --name         Show the name/path of GVim being used.
     echo   -w, --where        Show the path where this script is present.
     echo   -h, --help, /?     Show this help and exit.
