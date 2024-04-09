@@ -47,16 +47,40 @@ rem Starting point of this script.
     goto :eof
 
 
-rem Automatically detect the path of GVim executable.
-rem
-rem If GVim is found on the system, set VIM_CMD to its path; do not set
-rem VIM_CMD otherwise.
-:find_vim
     rem Automatically detect the path of GVim executable.
-    for /f "tokens=2*" %%a in (
-            'reg query HKLM\SOFTWARE\Vim\GVim') do set VIM_CMD=%%b
+    rem
+    rem If GVim is found on the system, set VIM_CMD to its path; do not set
+    rem VIM_CMD otherwise.
+    :find_vim
+    rem Automatically detect the path of GVim executable.
+    reg query HKLM\SOFTWARE\Vim\GVim > nul 2>&1
+    IF %ERRORLEVEL% EQU 0 (
+      for /f "tokens=2*" %%a in (
+      'reg query HKLM\SOFTWARE\Vim\GVim') do set VIM_CMD="%%b"
+      IF EXIST "%VIM_CMD%" (
+        goto :eof
+      )
+    )
+    rem first try exe ...
+    where /q gvim.exe
+    IF NOT ERRORLEVEL 1 (
+      SET VIM_CMD=gvim.exe
+      goto :eof
+    )
+    rem ... finally try %EDITOR%
+    IF DEFINED EDITOR (
+      IF EXIST "%EDITOR%" (
+        SET VIM_CMD=%EDITOR%
+        goto :eof
+      ) ELSE (
+        where /q %EDITOR%
+        IF NOT ERRORLEVEL 1 (
+          SET VIM_CMD=%EDITOR%
+          goto :eof
+        )
+      )
+    )
     goto :eof
-
 
 rem Parse command line arguments passed to this script.
 rem
@@ -215,7 +239,18 @@ rem   Exit with an error message if VIM_CMD variable is not set.
         set opts=%opts% --remote%tab%-silent
     )
 
-    start "" "%VIM_CMD%" %opts% %*
+    rem gvim instance already running?
+    QPROCESS gvim.exe >NUL
+    IF %ERRORLEVEL% EQU 0 (
+      rem If file arguments are specified, open them in an existing
+      rem instance of GVim.
+      if EXIST "%~f1" (
+        start /b "" %VIM_CMD% %opts% --remote%tab%-silent %*
+      )
+    ) else (
+      start /b "" %VIM_CMD% %opts% %*
+    )
+
     goto :eof
 
 
