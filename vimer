@@ -3,9 +3,7 @@
 # Vimer - A convenience wrapper for gvim/mvim --remote(-tab)-silent.
 
 # The MIT License (MIT)
-#
 # Copyright (c) 2010-2016 Susam Pal
-#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
 # "Software"), to deal in the Software without restriction, including
@@ -13,10 +11,8 @@
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject to
 # the following conditions:
-#
 # The above copyright notice and this permission notice shall be
 # included in all copies or substantial portions of the Software.
-#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -24,7 +20,6 @@
 # CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 
 VERSION=0.2.1-DEV
 AUTHOR="Susam Pal"
@@ -45,198 +40,113 @@ express or implied. See the MIT License for details."
 NAME=${0##*/}
 
 TMP_DIR=/tmp/vimer
-EDITORS=gvim:mvim
+EDITORS="gvim mvim"
 
 # Starting point of this script.
-#
-# Arguments:
-#   arg...: All arguments this script was invoked with
-main()
-{
-    if [ -z "$VIM_CMD" ]
-    then
-        VIM_CMD="$(find_vim)"
-    fi
-
+# Arguments: All arguments this script was invoked with
+main() {
+    VIM_CMD=${VIM_CMD:-$(find_vim)}
     parse_arguments "$@"
 }
 
-
 # Find a GVim or MacVim.
-#
 # If either GVim or MacVim is found, print its name; do not print
 # anything otherwise.
-find_vim()
-{
-    echo $EDITORS | tr : '\n' | while read -r v
-    do
-        if "$v" --version > /dev/null 2>&1
-        then
+find_vim() {
+    for v in $EDITORS; do
+        if command -v "$v" >/dev/null 2>&1; then
             printf "%s" "$v"
-            break
+            return
         fi
     done
+    # Finally try $EDITOR
+    if [ -n "$EDITOR" ] && command -v "$EDITOR" >/dev/null 2>&1; then
+        printf "%s" "$EDITOR"
+    fi
 }
 
-
 # Parse command line arguments passed to this script.
-#
-# Arguments:
-#   arg...: All arguments this script was invoked with
-#
-# Errors:
-#   Exit with an error message if invalid arguments are specified.
-parse_arguments()
-{
-    while [ $# -gt 0 ]
-    do
+# Arguments: All arguments this script was invoked with
+# Errors: Exit with an error message if invalid arguments are specified.
+parse_arguments() {
+    while [ $# -gt 0 ]; do
         case $1 in
-            -t | --tab)
+            -t|--tab)
                 tab=-tab
+                ;;
+            -s|--server)
+                [ $# -lt 2 ] && quit "Argument missing after: \"$1\"."
+                server=$2
                 shift
                 ;;
-            -s | --server)
-                [ $# -lt 2 ] && quit Argument missing after: \""$1"\".
-                [ -z "$2" ] && quit Non-empty string must follow \""$1"\".
-                server=$2
-                shift 2
-                ;;
-            -n | --name)
+            -n|--name)
                 printf "%s\n" "$VIM_CMD"
                 exit
                 ;;
-            -h | --help)
+            -h|--help)
                 show_help
                 exit
                 ;;
-            -v | --version)
+            -v|--version)
                 show_version
                 exit
+                ;;
+            --) # End of all options
+                shift
+                break
+                ;;
+            -*)
+                quit "Invalid option: $1"
                 ;;
             *)
                 break
                 ;;
         esac
-    done
-
-    if [ $# -eq 0 ]
-    then
-        # If no file arguments are specified, start a new instance of
-        # GVim or MacVim.
-        exec_vim
-    elif [ "$1" = "-" ]
-    then
-        # If hyphen is specified as a file argument, read input from
-        # standard input.
-        [ $# -gt 1 ] && quit Too many edit arguments: \""$2"\".
-        exec_vim_with_stdin
-    fi
-
-    # Consume remaining file arguments.
-    while [ "$#" -gt 0 ]
-    do
-        args="$args \"$1\""
         shift
     done
 
-    # Execute GVim or MacVim with remaining file arguments.
-    exec_vim "$args"
+    if [ $# -eq 0 ]; then
+        exec_vim
+    elif [ "$1" = "-" ]; then
+        [ $# -gt 1 ] && quit "Too many edit arguments: \"$2\"."
+        exec_vim_with_stdin
+    else
+        exec_vim "$@"
+    fi
 }
 
-
 # Save standard input in a temporary file and edit it.
-exec_vim_with_stdin()
-{
-    # Create temporary directory.
-    if ! mkdir -p "$TMP_DIR"
-    then
-        quit Cannot create temporary directory: "$TMP_DIR".
-    fi
-
-    # Determine a unique temporary filename.
-    n=0
-    while :
-    do
-        d=$(date "+%Y-%m-%d_%H-%M-%S")
-        stdin_file="$TMP_DIR/_STDIN_${d}_${n}"
-        n=$(( $n + 1 ))
-        if [ ! -e "$stdin_file" ]
-        then
-            break
-        fi
-    done
-
-    # Create temporary file and edit it.
+exec_vim_with_stdin() {
+    mkdir -p "$TMP_DIR" || quit "Cannot create temporary directory: $TMP_DIR."
+    stdin_file=$(mktemp "$TMP_DIR/_STDIN_XXXXXX")
     cat > "$stdin_file"
     exec_vim "$stdin_file"
 }
 
-
 # Execute GVim or MacVim with specified arguments.
-#
-# This function accepts only a single argument that may represent
-# multiple arguments for GVim or MacVim. For example, if GVim or MacVim
-# needs to be invoked with two arguments, e.g. "foo bar.txt" and "baz
-# qux.txt", then this function must be invoked as follows.
-#
-#     exec_vim "\"foo bar.txt\" \"baz qux.txt\""
-#
-# Note that the above call has only one argument that represents two
-# quoted arguments that need to be passed to GVim or MacVim.
-#
-# Arguments:
-#   args...: All arguments specified as a single argument.
-#
-# Errors:
-#   Exit with an error message if VIM_CMD variable is not set.
-exec_vim()
-{
-    if [ -z "$VIM_CMD" ]
-    then
-        quit Cannot find GVim or MacVim.
-    fi
-
-    # If server name is specified, open files in an existing instance of
-    # GVim or MacVim with the specified server name, or start a new
-    # instance of GVim or MacVim with the specified server name.
-    if [ -n "$server" ]
-    then
-        opts="$opts --servername \"$server\""
-    fi
-
-    # If file arguments are specified, open them in an existing instance
-    # of GVim or MacVim.
-    if [ -n "$1" ]
-    then
-        opts="$opts --remote$tab-silent"
-    fi
-
-
-    eval exec "$VIM_CMD" "$opts" "$1"
+# Arguments: All arguments specified as individual arguments.
+# Errors: Exit with an error message if VIM_CMD variable is not set.
+exec_vim() {
+    [ -z "$VIM_CMD" ] && quit "Cannot find GVim or MacVim."
+    opts=""
+    [ -n "$server" ] && opts="$opts --servername $server"
+    [ -n "$tab" ] && opts="$opts --remote$tab-silent"
+    [ $# -gt 0 ] && opts="$opts --remote-silent"
+    eval exec "$VIM_CMD" $opts "$@"
 }
 
-
 # Terminate the script with an error message.
-#
-# Arguments:
-#   string...: String to print to standard error stream.
-#
-# Errors:
-#   Unconditionally cause the script to terminate with an error message
-#   and exit code 1.
-quit()
-{
+# Arguments: String to print to standard error stream.
+# Errors: Unconditionally cause the script to terminate with an error message and exit code 1.
+quit() {
     printf "%s: %s\n" "$NAME" "$*" >&2
     exit 1
 }
 
-
 # Show help.
-show_help()
-{
+show_help() {
     cat <<eof
-Usage: $NAME [-t] [-s] [-n] [-h] [-v] [-|FILE...]
-
+Usage: $NAME [-t] [-s NAME] [-n] [-h] [-v] [--] [-|FILE...]
 This is a wrapper script to open files in existing GVim or MacVim.
 If an existing instance of GVim or MacVim is running, the files are
 opened in it, otherwise, a new GVim or MacVim instance is launched.
@@ -261,17 +171,14 @@ Report bugs to <$SUPPORT_URL>.
 eof
 }
 
-
 # Show version and copyright.
-show_version()
-{
+show_version() {
     cat <<eof
 Vimer $VERSION
 $COPYRIGHT
 $NOTICE
 eof
 }
-
 
 # Start.
 [ -z "$import" ] && main "$@"
