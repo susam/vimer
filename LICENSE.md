@@ -1,5 +1,6 @@
 The MIT License (MIT)
 =====================
+
 Copyright (c) 2010-2016 Susam Pal
 
 Permission is hereby granted, free of charge, to any person obtaining
