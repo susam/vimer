@@ -39,6 +39,7 @@ Contents
 --------
 
 * [Necessity](#necessity)
+* [Current Development Status](#current-development-status)
 * [Getting Started](#getting-started)
 * [Troubleshooting](#troubleshooting)
 * [Context Menu](#context-menu)
@@ -129,6 +130,35 @@ This project was written to address the following needs.
     option for files called *Edit with GVim tab* that opens a file in
     a new tab page in an existing instance of GVim.  This feature is
     available only for Windows.
+
+
+Current Development Status
+--------------------------
+
+You might notice that this project has not received a new release for
+many years now.  This is due to the following three reasons:
+
+  - This project worked well for me as long as I used Vim actively.
+
+  - I use Emacs as my primary computing environment these days.  As I
+    result I use this project only occassionally these days.  When I
+    do use Vim, this project works well for me.
+
+  - In the initial few releases of this, I took great care to run the
+    test suite in the [test/](test/) directory with various shells.  I
+    do not have the time and resources to perform such testing
+    anymore.  As a result, I am reluctant to make any changes to this
+    project anymore.
+
+Due to the points mentioned above, I do not accept pull requests to
+this project.  If this project works for you, that's great!  However,
+if it does not, I hope you will be able to dive into the Vimer script
+that you use and update the script to suit your needs.
+
+Alternatively, you could also use Konfekt's fork of Vimer available at
+[github.com/konfekt/vimer](https://github.com/konfekt/vimer) which
+provides certain enhancements pertaining to locating the Vim
+executable more flexibly.
 
 
 Getting Started
