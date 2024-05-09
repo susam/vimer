@@ -140,7 +140,7 @@ many years now.  This is due to the following three reasons:
 
   - This project worked well for me as long as I used Vim actively.
 
-  - I use Emacs as my primary computing environment these days.  As I
+  - I use Emacs as my primary computing environment these days.  As a
     result I use this project only occassionally these days.  When I
     do use Vim, this project works well for me.
 
